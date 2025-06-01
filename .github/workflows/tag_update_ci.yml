@@ -74,7 +74,7 @@ jobs:
       - name: Create and push tag
         run : |
           TAG=${{ steps.bump-main.outputs.new_tag || steps.bump-bump-devlopment.outputs.new_tag }}
-          echo "Using tag: $TAG"
+          echo "$TAG"
           git tag $TAG
           git push origin $TAG
       
