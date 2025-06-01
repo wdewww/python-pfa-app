@@ -16,6 +16,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Set up Git config
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
       - name: Checkout code
         uses: actions/checkout@v3
         with:
@@ -51,13 +55,13 @@ jobs:
         if: github.ref == 'refs/heads/devlopment'
         run:  |
           current=${{ steps.get_tag.outputs.tag }}
-          branch = 'devlopment'
+          branch='devlopment'
 
           if [ -z "$current" ]; then
             current="v0.0.0"
           fi
 
-          version ="${current#v}"
+          version="${current#v}"
           IFS='.' read -r major minor patch <<< "$version"
 
           patch=$((patch + 1))
@@ -67,12 +71,13 @@ jobs:
 
       - name: Create and push tag
         if: steps.bump-main.outputs.new_tag || steps.bump-devlopment.outputs.new_tag
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
         run : |
           TAG=${{ steps.bump-main.outputs.new_tag || steps.bump-bump-devlopment.outputs.new_tag }}
-          git push origin ${{ steps.bump.outputs.new_tag }}
           echo "Using tag: $TAG"
           git tag $TAG
-          git push origin $TAG
+          git push https://x-access-token:${GH_PAT}@github.com/${{ github.repository }} $TAG
       
 
           
