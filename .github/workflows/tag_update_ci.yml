@@ -72,7 +72,7 @@ jobs:
       - name: Create and push tag
         if: steps.bump-main.outputs.new_tag || steps.bump-devlopment.outputs.new_tag
         run : |
-          TAG=${{ steps.bump-main.outputs.new_tag || steps.bump-development.outputs.new_tag }}
+          TAG=${{ steps.bump-main.outputs.new_tag || steps.bump-bump-devlopment.outputs.new_tag }}
           git push origin ${{ steps.bump.outputs.new_tag }}
           echo "Using tag: $TAG"
           git tag $TAG
