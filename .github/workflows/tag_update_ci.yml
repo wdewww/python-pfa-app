@@ -11,6 +11,10 @@ on:
       - devlopment
       - main
 
+permissions:
+  
+
+
 jobs:
   bump-version:
     runs-on: ubuntu-latest
@@ -77,6 +81,7 @@ jobs:
           TAG=${{ steps.bump-main.outputs.new_tag || steps.bump-bump-devlopment.outputs.new_tag }}
           echo "Using tag: $TAG"
           git tag $TAG
+          echo "GITHUBTOKEN: $GH_PAT"
           git push https://x-access-token:${GH_PAT}@github.com/${{ github.repository }} $TAG
       
 
