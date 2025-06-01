@@ -11,9 +11,7 @@ on:
       - devlopment
       - main
 
-permissions:
-  
-
+permissions: write-all
 
 jobs:
   bump-version:
