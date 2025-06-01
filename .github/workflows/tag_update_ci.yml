@@ -72,7 +72,7 @@ jobs:
       - name: Create and push tag
         if: steps.bump-main.outputs.new_tag || steps.bump-devlopment.outputs.new_tag
         env:
-          GH_PAT: ${{ secrets.GH_PAT }}
+          GH_PAT: ${{ secrets.TOKEN_GITHUB }}
         run : |
           TAG=${{ steps.bump-main.outputs.new_tag || steps.bump-bump-devlopment.outputs.new_tag }}
           echo "Using tag: $TAG"
