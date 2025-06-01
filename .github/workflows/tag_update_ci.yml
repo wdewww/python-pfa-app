@@ -72,15 +72,11 @@ jobs:
           echo "new_tag=$new_tag" >> $GITHUB_OUTPUT
 
       - name: Create and push tag
-        if: steps.bump-main.outputs.new_tag || steps.bump-devlopment.outputs.new_tag
-        env:
-          GH_PAT: ${{ secrets.TOKEN_GITHUB }}
         run : |
-          TAG=${{ steps.bump-main.outputs.new_tag || steps.bump-bump-devlopment.outputs.new_tag }}
-          echo "Using tag: $TAG"
+          TAG=${{ steps.bump-main.outputs.new_tag || steps.bump-devlopment.outputs.new_tag }}
+          echo "$TAG"
           git tag $TAG
-          echo "GITHUBTOKEN: $GH_PAT"
-          git push https://x-access-token:${GH_PAT}@github.com/${{ github.repository }} $TAG
+          git push origin $TAG
       
 
           
