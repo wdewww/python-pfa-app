@@ -1,0 +1,88 @@
+name : Update tags python microservice
+
+# this workflow aims at updating the tags
+# if the pull requrest is merged ( a push is made) to the devleopment the patch is increased
+# else if the pull request is merged to the main, a minor is increased
+
+
+on:
+  push:
+    branches:
+      - devlopment
+      - main
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up Git
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+      - name : Get latest tag
+        id: get_tag
+        run: |
+          latest=$(git tag --sort=-v:refname | grep '^v' | head -n 1)
+          echo "Latest tag: $latest"
+          echo "tag=$latest" >> $GITHUB_OUTPUT
+      - name: bump main
+        id: bump-main
+        if: github.ref == 'refs/heads/main'
+        run : |
+          current=${{ steps.get_tag.outputs.tag }}
+          branch='main'
+
+          if [ -z "$current" ]; then
+            current="v0.0.0"
+          fi
+
+          version="${current#v}"
+          IFS='.' read -r major minor patch <<< "$version"
+
+          minor=$((minor + 1))
+          patch=0
+          new_tag="v$major.$minor.$patch"
+          echo "New tag: $new_tag"
+          echo "new_tag=$new_tag" >> $GITHUB_OUTPUT
+          
+      - name: bump devlopment
+        id: bump-devlopment
+        if: github.ref == 'refs/heads/devlopment'
+        run:  |
+          current=${{ steps.get_tag.outputs.tag }}
+          branch = 'devlopment'
+
+          if [ -z "$current" ]; then
+            current="v0.0.0"
+          fi
+
+          version ="${current#v}"
+          IFS='.' read -r major minor patch <<< "$version"
+
+          patch=$((patch + 1))
+          new_tag="v$major.$minor.$patch"
+          echo "New tag: $new_tag"
+          echo "new_tag=$new_tag" >> $GITHUB_OUTPUT
+
+      - name: Create and push tag
+        if: steps.bump-main.outputs.new_tag || steps.bump-devlopment.outputs.new_tag
+        run : |
+          TAG=${{ steps.bump-main.outputs.new_tag || steps.bump-development.outputs.new_tag }} }}
+          git push origin ${{ steps.bump.outputs.new_tag }}
+          echo "Using tag: $TAG"
+          git tag $TAG
+          git push origin $TAG
+      
+
+          
+        
+     
+        
+  
+
+  
